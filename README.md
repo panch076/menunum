@@ -14,7 +14,7 @@ menunum set 87.5 -x %                # rolls to 87.5%
 Requires macOS 14+ and the Swift toolchain (Xcode or Command Line Tools).
 
 ```sh
-git clone https://github.com/<you>/menunum.git
+git clone https://github.com/panch076/menunum.git
 cd menunum
 make install            # installs to /usr/local/bin (use PREFIX=~/.local to change)
 ```
@@ -73,7 +73,7 @@ macOS 14+ app. In Xcode: *File → Add Package Dependencies…* and paste this r
 or in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/<you>/menunum.git", branch: "main")
+.package(url: "https://github.com/panch076/menunum.git", branch: "main")
 // ...
 .target(name: "MyApp", dependencies: [.product(name: "MenuNumKit", package: "menunum")])
 ```
