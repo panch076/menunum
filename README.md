@@ -66,13 +66,68 @@ curl -s https://api.coinbase.com/v2/prices/BTC-USD/spot | jq -r .data.amount | m
 Add `menunum run` to a LaunchAgent, or just add any `menunum` command to your shell
 startup. The menu bar process starts on first use either way.
 
+## Use it in your own app
+
+The animation lives in **MenuNumKit**, a Swift package library you can drop into any
+macOS 14+ app. In Xcode: *File → Add Package Dependencies…* and paste this repo's URL,
+or in `Package.swift`:
+
+```swift
+.package(url: "https://github.com/<you>/menunum.git", branch: "main")
+// ...
+.target(name: "MyApp", dependencies: [.product(name: "MenuNumKit", package: "menunum")])
+```
+
+### A ready-made menu bar item (AppKit)
+
+```swift
+import MenuNumKit
+
+let item = AnimatedStatusItem()        // keep a strong reference
+item.menu = myMenu                     // optional click menu
+
+item.number.style = .roll              // .roll, .tween or .fade
+item.number.prefix = "$"
+item.number.set(1337)                  // animates to $1,337
+item.number.countdown(from: 25 * 60)   // 25:00 ticking down
+item.number.onCountdownFinished = { NSSound.beep() }
+```
+
+`AnimatedNumber` is an `ObservableObject`, so you can also drive it from SwiftUI state.
+It supports `set`, `countdown`, `stopwatch`, `pause`, `resume`, `restart` and `clear`.
+
+### Just the view (SwiftUI)
+
+`AnimatedNumberText` animates whenever its value changes, wherever you put it:
+
+```swift
+MenuBarExtra {
+    Button("Add") { count += 1 }
+} label: {
+    AnimatedNumberText(value: count, style: .roll)
+}
+
+// or anywhere else
+AnimatedNumberText(value: price, style: .tween, format: .number(decimals: 2), prefix: "$")
+    .font(.largeTitle)
+```
+
+`AnimatedStatusItem` exists because `MenuBarExtra` labels don't always animate
+reliably. If you see that, use the status item instead.
+
+A complete example is in [`Examples/Demo`](Examples/Demo/main.swift): `swift run menunum-demo`.
+
 ## How it works
 
-A single binary is both the CLI and the menu bar app. `menunum run` puts an
-`NSStatusItem` in the menu bar that hosts a SwiftUI view. Rolling digits use
-`contentTransition(.numericText)`, tweening uses an `Animatable` view, and fading
-uses an opacity/scale transition. Other commands send JSON to the running process
-over `DistributedNotificationCenter`, and launch it first if needed.
+- **MenuNumKit** (`Sources/MenuNumKit`) has the reusable pieces. `AnimatedNumberText` uses
+  `contentTransition(.numericText)` for rolling, an `Animatable` view for tweening and an
+  opacity/scale transition for fading. `AnimatedStatusItem` hosts that view inside an
+  `NSStatusItem` and resizes it to fit.
+- **menunum** (`Sources/menunum`) is a thin CLI on top. `menunum run` shows an
+  `AnimatedStatusItem`. Other commands send JSON to that process over
+  `DistributedNotificationCenter`, launching it first if needed.
+
+Run the tests with `swift test`.
 
 ## License
 

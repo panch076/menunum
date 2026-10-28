@@ -4,7 +4,14 @@ import PackageDescription
 let package = Package(
     name: "menunum",
     platforms: [.macOS(.v14)],
+    products: [
+        .library(name: "MenuNumKit", targets: ["MenuNumKit"]),
+        .executable(name: "menunum", targets: ["menunum"]),
+    ],
     targets: [
-        .executableTarget(name: "menunum", path: "Sources/menunum")
+        .target(name: "MenuNumKit"),
+        .executableTarget(name: "menunum", dependencies: ["MenuNumKit"]),
+        .executableTarget(name: "menunum-demo", dependencies: ["MenuNumKit"], path: "Examples/Demo"),
+        .testTarget(name: "MenuNumKitTests", dependencies: ["MenuNumKit"]),
     ]
 )

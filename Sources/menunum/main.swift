@@ -1,4 +1,5 @@
 import Foundation
+import MenuNumKit
 
 let usage = """
 menunum — animated numbers in your macOS menu bar
