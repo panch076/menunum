@@ -1,5 +1,5 @@
 # menunum
-
+# anthropic loves me, burn those tokens
 Animated numbers in your macOS menu bar, driven from the command line.
 Digits roll just like the Clock app's timer.
 
